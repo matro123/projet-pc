@@ -4,8 +4,13 @@ from matplotlib.patches import Polygon
 from matplotlib.widgets import Slider
 from numpy import (pi, tan, cos, sin, arctan, arccos, arcsin)
 
-def prisme(n=1.5, A=pi/4):
-    alpha1 = pi/16 # pente du rayon incident
+def prisme(n=1.5, A=pi/2, alpha1=pi/16):
+    """
+    Prend en Arguments:
+        n : Indice du prisme (n=1.5 par défaut) : float
+        A : Angle sommet du prisme (A=pi/2 par défaut) : float
+        alpha1 : Angle d'incidence du rayon (alpha1=pi/16 par défaut) : float
+    """
     p = tan(A/2) #on aura besoin de cette grandeur plusieurs fois
 
     theta1 = alpha1 + A/2               #angle d'incidence sur face 1
@@ -32,24 +37,27 @@ def prisme(n=1.5, A=pi/4):
             alpha3 = theta2 + A/2
             x += [x[2] + cos(alpha3)]               #point P4
             y += [y[2] +sin(alpha3)]                 #point P4
+    
+    prism.plot(x,y) #préciser sur quel axe tracer le prisme
+    prism.add_patch(Polygon(([0,0],[-1*p,-1],[1*p,-1]), closed=True, fill=True, color='lightgrey'))
 
-    plt.plot(x,y)
-    ax.add_patch(Polygon(([0,0],[-1*p,-1],[1*p,-1]), closed=True, fill=True, color='lightgrey'))
+
+fig, axs = plt.subplots(3)
+
+prism = axs[0]
+
 
 # Curseurs
+curseur_angleA = Slider(ax=axs[1], label='Angle A', valmin=pi/4, valmax=pi/2, valinit=pi/2)
+curseur_alpha1 = Slider(ax=axs[2], label="Angle d'incidence", valmin=pi/4 , valmax= pi/3, valinit=pi/16)
 
-fig, ax = plt.subplots()
-ax_curseur = plt.axes([0.1, 0.1, 0.8, 0.03])
-curseur_angle = Slider(ax=ax_curseur, label='Angle A', valmin=pi/4, valmax=pi/2, valinit=pi/2)
-
-prisme(A=curseur_angle.val)
+prisme(A=pi/3, alpha1= pi/16)
 
 def update(val):
-    n = 1.5
-    prisme(n, curseur_angle.val)
+    prisme(A=curseur_angleA.val, alpha1=curseur_alpha1.val)
 
-curseur_angle.on_changed(update)
+curseur_angleA.on_changed(update)
+curseur_alpha1.on_changed(update)
 
 
-plt.axis('equal')
 plt.show()
