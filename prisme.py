@@ -38,18 +38,25 @@ def prisme(n=1.5, A=pi/2, alpha1=pi/16):
             x += [x[2] + cos(alpha3)]               #point P4
             y += [y[2] +sin(alpha3)]                 #point P4
     
-    prism.plot(x,y) #préciser sur quel axe tracer le prisme
-    prism.add_patch(Polygon(([0,0],[-1*p,-1],[1*p,-1]), closed=True, fill=True, color='lightgrey'))
+    curseur_alpha1.valmax = pi/2 - A/2 # angle d'incidene maximal possible
+    curseur_alpha1.val = min(curseur_alpha1.val, curseur_alpha1.valmax) # On empeche l'utilisateur de dépasser la valeur max
+    curseur_alpha1.ax.set_xlim(curseur_alpha1.valmin, curseur_alpha1.valmax)
+
+    prism_ax.cla()
+    prism_ax.plot(x,y)
+    prism_ax.add_patch(Polygon(([0,0],[-1*p,-1],[1*p,-1]), closed=True, fill=True, color='lightgrey'))
 
 
-fig, axs = plt.subplots(3)
+fig, axs = plt.subplots(3, gridspec_kw={'height_ratios': [5, 1, 1]})
 
-prism = axs[0]
+prism_ax = axs[0]
 
+prism = Polygon(([0,0],[0,0],[0,0]), closed=True, fill=True, color='lightgrey') # initialisation
+prism_ax.add_patch(prism)
 
 # Curseurs
-curseur_angleA = Slider(ax=axs[1], label='Angle A', valmin=pi/4, valmax=pi/2, valinit=pi/2)
-curseur_alpha1 = Slider(ax=axs[2], label="Angle d'incidence", valmin=pi/4 , valmax= pi/3, valinit=pi/16)
+curseur_angleA = Slider(ax=axs[1], label='Angle A', valmin=pi/4, valmax=pi/2, valinit=3*pi/8)
+curseur_alpha1 = Slider(ax=axs[2], label="Angle d'incidence", valmin=0 , valmax=pi/2, valinit=pi/2 - 3*pi/16)
 
 prisme(A=pi/3, alpha1= pi/16)
 
@@ -58,6 +65,5 @@ def update(val):
 
 curseur_angleA.on_changed(update)
 curseur_alpha1.on_changed(update)
-
 
 plt.show()
